@@ -13,4 +13,4 @@ testservers
  
 [datacenter:vars]
 ansible_ssh_user=mdesenfants
-ansible_python_interpreter=/usr/bin/python3.7
+ansible_python_interpreter=/usr/bin/python3.6
