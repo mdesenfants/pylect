@@ -1,0 +1,29 @@
+---
+- hosts: webservers
+  remote_user: root
+  tasks:
+    - name: ensure all packages are installed
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - python3.7
+          - python3-pip
+          - python3-virtualenv
+          - python3-distutils
+          - gunicorn
+      become: yes
+    - name: install pipenv
+      shell: python3 -m pip install --user pipenv
+    - name: clone our web app
+      git:
+        repo: 'https://github.com/mdesenfants/pylect'
+        dest: '~/pylect'
+    - name: initialize pipenv in our project
+      shell: python3 -m pipenv install
+      args:
+        chdir: "~/pylect/"
+    - name: run webservice on port 8080
+      shell: python3 -m pipenv gunicorn atomic:app -p atomic.pid -b 0.0.0.0:8080 -D
+      args:
+        chdir: "~/pylect/"

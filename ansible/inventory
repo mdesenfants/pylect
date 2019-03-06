@@ -1,0 +1,16 @@
+web ansible_ssh_host=52.183.119.171
+test ansible_ssh_host=13.66.251.137
+ 
+[webservers]
+web
+ 
+[testservers]
+test
+ 
+[datacenter:children]
+webservers
+testservers
+ 
+[datacenter:vars]
+ansible_ssh_user=mdesenfants
+ansible_python_interpreter=/usr/bin/python3.7
