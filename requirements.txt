@@ -2,4 +2,4 @@
 
 azure-storage==0.36.0
 flask==1.0.2
-gunicorn
+gunicorn==19.9.0
