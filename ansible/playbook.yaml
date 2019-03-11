@@ -23,7 +23,7 @@
         repo: 'https://github.com/mdesenfants/pylect'
         dest: '~/pylect'
     - name: install requirements
-      shell: python3 -m pip install -r ~/pylect/requirements.txt
+      shell: python3 -m pip install --user -r ~/pylect/requirements.txt
     - name: run webservice on port 8080
       shell: python3 -m gunicorn atomic:app -p atomic.pid -b 0.0.0.0:8080 -D
       args:
