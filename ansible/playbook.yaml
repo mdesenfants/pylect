@@ -15,13 +15,16 @@
           - gunicorn
       become: yes
     - name: clear existing app
-      shell: rm -rf ./pylect
+      file:
+        path: ~/pylect
+        state: absent
     - name: clone our web app
       git:
         repo: 'https://github.com/mdesenfants/pylect'
         dest: '~/pylect'
-    - pip:
-      requirements: ~/pylect/requirements.txt
+    - name: install requirements
+      pip:
+        requirements: ~/pylect/requirements.txt
     - name: run webservice on port 8080
       shell: python3 -m gunicorn atomic:app -p atomic.pid -b 0.0.0.0:8080 -D
       args:
