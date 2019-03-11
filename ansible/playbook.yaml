@@ -14,23 +14,15 @@
           - python3-gunicorn
           - gunicorn
       become: yes
-    - name: install pipenv
-      shell: /usr/bin/python3.7 -m pip install --user pipenv
     - name: clear existing app
       shell: rm -rf ./pylect
     - name: clone our web app
       git:
         repo: 'https://github.com/mdesenfants/pylect'
         dest: '~/pylect'
-    - name: initialize pipenv in our project
-      shell: python3 -m pipenv --python /usr/bin/python3.7 install
-      args:
-        chdir: "~/pylect/"
-    - name: install gunicorn
-      shell: python3 -m pipenv --python /usr/bin/python3.7 install gunicorn
-      args:
-        chdir: "~/pylect/"
+    - pip:
+      requirements: ~/pylect/requirements.txt
     - name: run webservice on port 8080
-      shell: python3 -m pipenv --python /usr/bin/python3.7 run gunicorn atomic:app -p atomic.pid -b 0.0.0.0:8080 -D
+      shell: python3 -m gunicorn atomic:app -p atomic.pid -b 0.0.0.0:8080 -D
       args:
         chdir: "~/pylect/"

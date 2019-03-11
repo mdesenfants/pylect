@@ -7,7 +7,7 @@ count = 0
 @app.route('/', methods=['GET'])
 def atomic():
     global count
-    return str(count)
+    return str(count) # effectively a json number
 
 @app.route('/increment', methods=['POST'])
 def increment():
