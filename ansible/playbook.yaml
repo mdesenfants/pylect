@@ -8,21 +8,44 @@
       vars:
         packages:
           - python3-docker
-          - docker
+          - docker.io
       become: yes
     - name: clear existing app
       file:
         path: ~/pylect
         state: absent
+    - name: check for existing container
+      become: yes
+      stat:
+        path: /root/container.cid
+      register: container_runs
+    - name: get cidfile contents
+      become: yes
+      shell: cat /root/container.cid
+      register: cidfile
+      when: container_runs.stat.exists == True
+    - name: stop existing container
+      shell: docker stop {{ cidfile.stdout  }}
+      become: yes
+      when: container_runs.stat.exists == True
+    - name: clear docker id file
+      become: yes
+      file:
+        path: /root/container.cid
+        state: absent
+      when: container_runs.stat.exists == True
     - name: clone our web app
+      become: yes
       git:
         repo: 'https://github.com/mdesenfants/pylect'
         dest: ~/pylect
     - name: build docker image
       shell: docker build -t pylect .
+      become: yes
       args:
         chdir: ~/pylect
     - name: run docker container
-      shell: docker run -d -p 8080:8080 pylect
+      shell: docker run -d -p 8080:8080 --cidfile="/root/container.cid" pylect
+      become: yes
       args:
         chdir: ~/pylect
