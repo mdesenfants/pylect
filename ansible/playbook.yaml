@@ -7,12 +7,8 @@
         name: "{{ packages }}"
       vars:
         packages:
-          - python3.7
-          - python3-pip
-          - python3-virtualenv
-          - python3-distutils
-          - python3-gunicorn
-          - gunicorn
+          - python3-docker
+          - docker
       become: yes
     - name: clear existing app
       file:
@@ -21,10 +17,12 @@
     - name: clone our web app
       git:
         repo: 'https://github.com/mdesenfants/pylect'
-        dest: '~/pylect'
-    - name: install requirements
-      shell: python3 -m pip install --user -r ~/pylect/requirements.txt
-    - name: run webservice on port 8080
-      shell: python3 -m gunicorn atomic:app -p atomic.pid -b 0.0.0.0:8080 -D
+        dest: ~/pylect
+    - name: build docker image
+      shell: docker build -t pylect .
       args:
-        chdir: "~/pylect/"
+        chdir: ~/pylect
+    - name: run docker container
+      shell: docker run -d -p 8080:8080 pylect
+      args:
+        chdir: ~/pylect
